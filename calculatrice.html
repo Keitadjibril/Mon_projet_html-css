@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Simple Calculator</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, #e0f7fa, #f1f8e9);
+    }
+
+    .calculator {
+      width: 320px;
+      background: #222;
+      border-radius: 18px;
+      padding: 20px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
+    }
+
+    #display {
+      width: 100%;
+      height: 70px;
+      border: none;
+      outline: none;
+      background: #111;
+      color: #fff;
+      text-align: right;
+      font-size: 2rem;
+      padding: 10px 15px;
+      border-radius: 12px;
+      margin-bottom: 18px;
+    }
+
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    button {
+      border: none;
+      border-radius: 12px;
+      font-size: 1.2rem;
+      padding: 18px 0;
+      cursor: pointer;
+      transition: transform 0.1s ease, opacity 0.2s ease;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+
+    button:active {
+      transform: scale(0.98);
+    }
+
+    .operator {
+      background: #ffb703;
+      color: #111;
+      font-weight: bold;
+    }
+
+    .number {
+      background: #f4f4f4;
+      color: #111;
+    }
+
+    .clear {
+      background: #ef476f;
+      color: white;
+    }
+
+    .equal {
+      background: #06d6a0;
+      color: #111;
+      font-weight: bold;
+      grid-column: span 2;
+    }
+  </style>
+</head>
+<body>
+  <div class="calculator">
+    <input id="display" type="text" disabled />
+
+    <div class="buttons">
+      <button class="clear" data-value="C">C</button>
+      <button class="operator" data-value="/">÷</button>
+      <button class="operator" data-value="*">×</button>
+      <button class="operator" data-value="DEL">DEL</button>
+
+      <button class="number" data-value="7">7</button>
+      <button class="number" data-value="8">8</button>
+      <button class="number" data-value="9">9</button>
+      <button class="operator" data-value="-">−</button>
+
+      <button class="number" data-value="4">4</button>
+      <button class="number" data-value="5">5</button>
+      <button class="number" data-value="6">6</button>
+      <button class="operator" data-value="+">+</button>
+
+      <button class="number" data-value="1">1</button>
+      <button class="number" data-value="2">2</button>
+      <button class="number" data-value="3">3</button>
+      <button class="equal" data-value="=">=</button>
+
+      <button class="number" data-value="0" style="grid-column: span 2;">0</button>
+      <button class="number" data-value=".">.</button>
+    </div>
+  </div>
+
+  <script>
+    const display = document.getElementById("display");
+    let expression = "";
+
+    function updateDisplay() {
+      display.value = expression;
+    }
+
+    function clearAll() {
+      expression = "";
+      updateDisplay();
+    }
+
+    function deleteLast() {
+      expression = expression.slice(0, -1);
+      updateDisplay();
+    }
+
+    function calculate() {
+      try {
+        const result = Function(`"use strict"; return (${expression})`)();
+        if (!Number.isFinite(result)) {
+          throw new Error("Invalid result");
+        }
+        expression = String(result);
+        updateDisplay();
+      } catch {
+        expression = "";
+        display.value = "Error";
+      }
+    }
+
+    document.querySelectorAll("button").forEach((button) => {
+      button.addEventListener("click", () => {
+        const value = button.dataset.value;
+
+        if (value === "C") {
+          clearAll();
+          return;
+        }
+
+        if (value === "DEL") {
+          deleteLast();
+          return;
+        }
+
+        if (value === "=") {
+          calculate();
+          return;
+        }
+
+        expression += value;
+        updateDisplay();
+      });
+    });
+  </script>
+</body>
+</html>
